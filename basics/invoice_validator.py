@@ -1,14 +1,12 @@
 def main():
     vendor_name = input ("What's the vendor name? ")
-    # invoice_amount = float (input ("What's the Invoice Amount? "))
-    # payment_terms = input ("What's the payment terms")
-
+    
     if vendor_name == "":
         print("Error: vendor name is required")
         return
     
     invoice_amount = float (input ("What's the Invoice Amount? "))
-    payment_terms = input ("What's the payment terms") 
+    payment_terms = input ("What's the payment terms? ").lower() 
     status = approval_status(invoice_amount) 
     print (status)
     match payment_terms:
@@ -20,6 +18,7 @@ def main():
             print("Payment due immediately")
         case _:
             print("Warning: Unknown payment term")     
+    print (f"Vendor: {vendor_name} | Amount: ${invoice_amount:,.2f}")
 
 def approval_status(invoice_amount):
     if invoice_amount <= 0:
