@@ -1,11 +1,13 @@
 def main():
     invoice_batch = [
-        {"vendor" : "Lumen", "amount" : 12500, "terms" : "net30"},
-        {"vendor" : "Zayo", "amount" : 800, "terms" : "due"},
-        {"vendor" : "Zayo", "amount" : -50, "terms" : "net60"},
-        {"vendor" : "", "amount" : 500, "terms" : "net30"},
-        {"vendor" : "Lumen", "amount" : 5000, "terms" : "NET60"},
-        {"vendor" : "Comcast", "amount" : 9999.99, "terms" : "net90"}
+        {"vendor": "Lumen", "amount": "$12,500.00", "terms": "net30"},
+        {"vendor": "Zayo", "amount": "800", "terms": "due"},
+        {"vendor": "Zayo", "amount": "-50", "terms": "net60"},
+        {"vendor": "", "amount": "500", "terms": "net30"},
+        {"vendor": "Lumen", "amount": "5,000", "terms": "NET60"},
+        {"vendor": "Comcast", "amount": "9999.99", "terms": "net90"},
+        {"vendor": "Verizon", "amount": "N/A", "terms": "net30"},
+        {"vendor": "AT&T", "amount": "", "terms": "due"},
     ]
 
     print_line(invoice_batch)
@@ -32,13 +34,27 @@ def describe_terms(payment_terms):
             case _:
                 return("Warning: Unknown payment term")
 
+def parse_amount(raw):
+    amount_clean = raw.replace("$", "").replace(",", "")
+    try:
+        return float(amount_clean)
+    except ValueError:
+        return None
 
 
 def print_line(invoice_batch):
     for invoice in invoice_batch:
-        status = approval_status(invoice["amount"])
+        if invoice["vendor"] == "":
+            print("Skipped: vendor name is required")
+            continue
+        amount = parse_amount(invoice["amount"])
+        if amount is None:
+            print(f"Error: invalid amount '{invoice['amount']}' ({invoice['vendor']})")
+            continue
+        status = approval_status(amount)
         terms = describe_terms(invoice["terms"])
-        print (f"{invoice["vendor"]} | ${invoice["amount"]:,.2f} | {terms} | {status}")
+        print(f"{invoice['vendor']} | ${amount:,.2f} | {terms} | {status}")
+        
 
 
 main()
